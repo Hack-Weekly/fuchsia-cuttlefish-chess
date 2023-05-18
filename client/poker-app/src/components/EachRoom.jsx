@@ -1,52 +1,10 @@
 import React, {useState, useEffect} from 'react'
 import styled from 'styled-components';
-
-{/* 
- const fetchRepos = async () => {
-            try {
-                const promises = githubAccounts.map((account) =>
-                    fetch(repoBaseURL + account + "/repos").then((response) => response.json())
-                );
-                const responses = await Promise.all(promises);
-                console.log(responses)
-                const data = responses.flatMap((d) => d);
-                const results = data.flatMap((entry: any) => {
-                    const entryProject = new Project(entry["name"],
-                    entry["description"], entry["html_url"],
-                    `https://github.com/`, [``]);
-                    console.log(entryProject.getProjectDescription())
-                    return entryProject
-                });
-                console.log(results);
-                setResults(results);
-            } catch (error) {
-                console.log("Error: " + error)
-            }
-        };
-        fetchRepos();
-    }, [])
-    return(
+import { Link } from 'react-router-dom'
 
 
-      setTimeout(() => {
-            setIsLoading(false);
-        }, 1000);
+function EachRoom({name, currentPlayers, max, gameid, roomNum}) {
 
-        return ( <div>
-        {isLoading ? (
-          <p>Loading...</p>
-        ) : (
-            <ProjectsCardContainer>
-                {projects.map((project) => {
-                    return <Card project={project}></Card>
-                })}
-            </ProjectsCardContainer>
-        )}
-      </div>)
-}
-*/}
-
-function EachRoom({name, currentPlayers, max, gameid}) {
   const [pCount, setPCount] = useState(0);
   const [data, setData] = useState({});
 
@@ -65,7 +23,13 @@ function EachRoom({name, currentPlayers, max, gameid}) {
     <RowHolder>
         <RoomName>Room Name</RoomName>
         <PlayerCounts>{pCount} / {data && data.max ? (<span>{data.max}</span>) : ("Loading")}</PlayerCounts>
-        {pCount === 8 ? (<Full>Full</Full>) : (<Join>Join</Join>)}
+        {pCount === 8 ? (<Full>Full</Full>) : (
+            <JoinLink to={`/room${roomNum}`}>
+                <Join>
+                    Join
+                </Join>
+            </JoinLink>
+        )}
     </RowHolder>
   )
 }
@@ -85,10 +49,22 @@ align-items: center;
 margin: 1rem;`
 
 const Full = styled.button`
-width: 30%;
+width: 70%;
 margin: 0 12px;
 background-color: red;
 `
 const Join = styled(Full)`
 background-color: green;
+width: 100%;
 `
+
+const JoinLink = styled(Link)`
+color:white;
+text-decoration: none;
+&:hover,
+&:focus{
+   color: blue;
+}
+&:active{
+   color: red;
+};`
