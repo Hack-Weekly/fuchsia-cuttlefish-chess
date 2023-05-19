@@ -2,7 +2,7 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App.jsx'
 import './index.css'
-import InsideRoom from './components/InsideRoom.jsx'
+import Table from './components/game/Table.jsx'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 
 const router = createBrowserRouter([
@@ -12,23 +12,23 @@ const router = createBrowserRouter([
   },
   {
     path: "/room1",
-    element: <InsideRoom />
+    element: <Table />
   },
   {
     path: "/room2",
-    element: <InsideRoom />
+    element: <Table />
   },
   {
     path: "/room3",
-    element: <InsideRoom />
+    element: <Table />
   },
   {
     path: "/room4",
-    element: <InsideRoom />
+    element: <Table />
   },
   {
     path: "/room5",
-    element: <InsideRoom />
+    element: <Table />
   }
 ]);
 

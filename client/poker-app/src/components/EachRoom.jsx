@@ -48,17 +48,21 @@ justify-contents: center;
 align-items: center;
 margin: 1rem;`
 
-const Full = styled.button`
-width: 70%;
-margin: 0 12px;
-background-color: red;
-`
-const Join = styled(Full)`
+const Join = styled.button`
 background-color: green;
 width: 100%;
 `
 
+const Full = styled(Join)`
+background-color: red;
+width: 30%;
+&:hover{
+  background-color: gray;
+}
+`
+
 const JoinLink = styled(Link)`
+width: 30%;
 color:white;
 text-decoration: none;
 &:hover,
