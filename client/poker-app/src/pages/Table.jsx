@@ -2,6 +2,7 @@ import React from 'react'
 import styled from 'styled-components';
 import { Link } from 'react-router-dom'
 import { TiArrowBackOutline } from 'react-icons/ti'
+import Card from '../components/game/Card';
 
 function InsideRoom() {
   return (
@@ -14,7 +15,11 @@ function InsideRoom() {
             <OpenentContainer column="5/7" row="1/2">Oponent 4</OpenentContainer>
             <OpenentContainer column="7/8" row="1/3">Oponent 5</OpenentContainer>
             <OpenentContainer column="8/9" row="2/4">Oponent 6</OpenentContainer>
-            <PlayerContainer>Player</PlayerContainer>
+            <PlayerContainer>
+              {/* Cards for testing */}
+              <Card suit={'H'} rank={1}/>
+              <Card suit={'C'} rank={12}/>
+            </PlayerContainer>
         </FeltContainer>
     </GameContainer>
   )
@@ -57,6 +62,7 @@ border: solid;
 display: flex;
 align-items: center;
 justify-content: center;
+gap: 5px;
 `
 
 const QuitLink  = styled(Link)`
@@ -64,7 +70,7 @@ align-self: start;
 justify-selft: start;
 display: flex;
 align-items: center;
-color: black;
+text-decoration: none;
 `
 
 export default InsideRoom
