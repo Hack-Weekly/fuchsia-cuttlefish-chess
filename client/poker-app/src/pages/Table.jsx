@@ -4,12 +4,15 @@ import { TiArrowBackOutline } from 'react-icons/ti'
 import CommunityCards from '../components/game/CommunityCards';
 import { useState } from 'react';
 import PlayerCards from '../components/game/PlayerCards';
+import Opponent from '../components/game/Opponent';
 
 function InsideRoom() {
 
   const [communityCards, setCommunityCards] = useState(preFlop);
   const [playerCards, setPlayerCards] = useState(preDeal);
 
+
+  // TESTING
   const reset = ()=>{
     setPlayerCards(preDeal);
     setCommunityCards(preFlop)
@@ -27,17 +30,30 @@ function InsideRoom() {
     setCommunityCards(river);
   }
 
+  const opponentStatus = {
+    fold:"fold",
+    waiting:"waiting",
+    bet:"bet",
+    call:"call"
+  }
+
+  const opponentChips = 5000;
+
+  const betAmount = 50;
+
+  //TESTING
+
 
   return (
     <GameContainer>
         <QuitLink to={`/`}><TiArrowBackOutline size={20}/>Leave Table</QuitLink>
         <FeltContainer>
-            <OponentContainer column="1/2" row="2/4">Oponent 1</OponentContainer>
-            <OponentContainer column="2/3" row="1/3">Oponent 2</OponentContainer>
-            <OponentContainer column="3/5" row="1/2">Oponent 3</OponentContainer>
-            <OponentContainer column="5/7" row="1/2">Oponent 4</OponentContainer>
-            <OponentContainer column="7/8" row="1/3">Oponent 5</OponentContainer>
-            <OponentContainer column="8/9" row="2/4">Oponent 6</OponentContainer>
+            <OponentContainer column="1/2" row="2/4"><Opponent status={opponentStatus.fold} chips={opponentChips} betAmount={betAmount}/></OponentContainer>
+            <OponentContainer column="2/3" row="1/3"><Opponent status={opponentStatus.fold} chips={opponentChips} betAmount={betAmount}/></OponentContainer>
+            <OponentContainer column="3/5" row="1/2"><Opponent status={opponentStatus.bet} chips={opponentChips} betAmount={betAmount}/></OponentContainer>
+            <OponentContainer column="5/7" row="1/2"><Opponent status={opponentStatus.call} chips={opponentChips} betAmount={betAmount}/></OponentContainer>
+            <OponentContainer column="7/8" row="1/3"><Opponent status={opponentStatus.call} chips={opponentChips} betAmount={betAmount}/></OponentContainer>
+            <OponentContainer column="8/9" row="2/4"><Opponent status={opponentStatus.waiting} chips={opponentChips} betAmount={betAmount}/></OponentContainer>
             <RiverContainer>
               <CommunityCards cards = {communityCards}/>
             </RiverContainer>
@@ -80,9 +96,11 @@ const OponentContainer = styled.div`
 grid-column: ${props => props.column};
 grid-row: ${props => props.row};
 display: flex;
+flex-direction: column;
 align-items: center;
 justify-content: center;
-color: black;
+// border: solid;
+// border-color: red;
 `
 const RiverContainer = styled.div`
 grid-column: 3/7;
