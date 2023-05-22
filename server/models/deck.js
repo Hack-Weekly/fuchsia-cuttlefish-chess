@@ -30,7 +30,7 @@ class Deck {
     }
 
     /**
-     * Method to split the deck and uses a modelo operator to determine which
+     * Simple Method to split the deck and uses a modelo operator to determine which
      * half to add first.
      */
     shuffle() {
