@@ -1,5 +1,4 @@
 const {openPool, closePool} = require('../controller/client')
-const {login, signup, deleteUser, selectUser, selectAllUser} = require('../controller/userController')
 const express = require('express');
 const router = express.Router()
 const {signin, signup, selectUser, selectAllUsers, deleteUser} = require('../controller/userController');
@@ -46,8 +45,8 @@ router.get('/', (res, req) => {
 
 router.delete('/:id', (res, req) => {
     try {
-        const requestUser = new User(req.body.username, req.body.password);
-        const user = signup(requestUser);
+        const requestUser = new User(req.p);
+        const user = deleteUser(requestUser);
         res.send(user);
     } catch (error) {
         res.status(400)

@@ -5,13 +5,13 @@ import { query } from "express";
  * 
  * @param {User} User 
  */
-export const signin = (User, pool) => {
+export const signin = (user, pool) => {
     
 
     const query = {
         name: "signin-user",
         text: "SELECT userId, username, password FROM user WHERE username = $1, password = $2",
-        values: [User.getUsername(), User.getPassword()]
+        values: [user.getUsername(), user.getPassword()]
     }
     
 
@@ -27,12 +27,12 @@ export const signin = (User, pool) => {
     });
 } 
 
-export const signup = (User, pool) => {
+export const signup = (user, pool) => {
 
     const query = {
         name: "signup-user",
         text: "INSERT INTO user(username, password) VALUES ($1, $2)",
-        values: [User.getUsername(), User.getPassword()]
+        values: [user.getUsername(), user.getPassword()]
     }
 
     pool.query(query, (err, res) => {
@@ -40,8 +40,8 @@ export const signup = (User, pool) => {
             console.error(err);
             return;
         } else {
-            const data = res.rows[0];
-            return new User(data.userId, data.username);
+            const user = signin(user, pool);
+            return user;
         }
     })
 
@@ -68,8 +68,8 @@ export const deleteUser = (username, password) => {
 export const selectUser = () => {
     const query = {
         name: "select-user",
-        text: "SELECT * FROM user",
-        values: [User.getUsername(), User.getPassword()]
+        text: "SELECT * FROM user WHERE userId = $1",
+        values: [User.getUserId()]
     }
 
     pool.query(query, (err, res) => {
@@ -84,8 +84,18 @@ export const selectUser = () => {
 }
 
 export const selectAllUsers = () => {
-    const users = [];
-    const query = "SELECT * FROM users";
+    const query = {
+        name: "select-all-users",
+        text: "SELECT * FROM user"
+    }
 
-
+    pool.query(query, (err, res) => {
+        if (err) {
+            console.error(err);
+            return;
+        } else {
+            const users = res.rows.map(row => new User(row.userId, row.username, row.password));
+            return users;
+        }
+    })
 }
