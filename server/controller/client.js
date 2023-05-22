@@ -4,7 +4,7 @@ const {Pool} = require('pg');
 
 
 
-openPool = () => {
+export const openPool = () => {
     fs.readFile('../sec.json', 'utf8', (error, data) => {
         if(error) {
             console.error('Error loading secrets: ', error);
@@ -19,7 +19,7 @@ openPool = () => {
             const password = secrets.password;
             const port = secrets.port;
     
-            const pool = new Pool({
+            const client = new Pool({
                 user: user,
                 host: host,
                 database: database,
@@ -35,6 +35,6 @@ openPool = () => {
     })
 }
 
-closePool = (pool) => {
-    pool.end();
+export const closePool = (client) => {
+    client.end();
 };
