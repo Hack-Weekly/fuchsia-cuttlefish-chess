@@ -10,7 +10,7 @@ function Opponent({status, chips, betAmount}) {
             {status!=="fold" && <SecretCard/>}
             {status==="fold" && <EmptyHand/>}
         </OpponentHand>
-        <OpponentInfo>
+        <OpponentInfo status={status}>
             <OpponentChips>
                 ${chips}
             </OpponentChips>
@@ -37,13 +37,16 @@ display: flex;
 margin-bottom: 15px;
 `
 const EmptyHand = styled.div`
-height: 55px
+height: 55px;
 `;
 
 const OpponentInfo = styled.div`
 padding: 5px;
 background-color: rgba(167, 167, 167, 0.6);
 border-radius: 10px;
+border-style: ${props => props.status==="thinking" ? "dashed" : "none"};
+border-color: ${props => props.status==="thinking" ? "red" : "none"};
+
 `
 
 const OpponentChips = styled.div`
@@ -55,5 +58,5 @@ color: green;
 `
 
 const StatusTag = styled.div`
-color: ${props => props.status==="fold" ? "black" : props => props.status==="waiting" ? "yellow" : props => props.status==="bet" ? "blue" : "green"};
+color: ${props => props.status==="fold" ? "black" : props => props.status==="thinking" ? "yellow" : props => props.status==="bet" ? "red" : props => props.status==="call" ? "blue" : "dark-gray"};
 `
