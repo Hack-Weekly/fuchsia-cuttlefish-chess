@@ -5,11 +5,14 @@ import CommunityCards from '../components/game/CommunityCards';
 import { useState } from 'react';
 import PlayerCards from '../components/game/PlayerCards';
 import Opponent from '../components/game/Opponent';
+import PlayerButton from '../components/game/PlayerButton';
 
 function InsideRoom() {
 
   const [communityCards, setCommunityCards] = useState(preFlop);
   const [playerCards, setPlayerCards] = useState(preDeal);
+  const [pot, setPot] = useState(200);
+  const [playerCash, setPlayerCash] = useState(5000);
 
 
   // TESTING
@@ -33,7 +36,9 @@ function InsideRoom() {
   const opponentStatus = {
     fold:"fold",
     waiting:"waiting",
+    thinking:"thinking",
     bet:"bet",
+    raise:"raise",
     call:"call"
   }
 
@@ -52,21 +57,22 @@ function InsideRoom() {
             <OponentContainer column="2/3" row="1/3"><Opponent status={opponentStatus.fold} chips={opponentChips} betAmount={betAmount}/></OponentContainer>
             <OponentContainer column="3/5" row="1/2"><Opponent status={opponentStatus.bet} chips={opponentChips} betAmount={betAmount}/></OponentContainer>
             <OponentContainer column="5/7" row="1/2"><Opponent status={opponentStatus.call} chips={opponentChips} betAmount={betAmount}/></OponentContainer>
-            <OponentContainer column="7/8" row="1/3"><Opponent status={opponentStatus.call} chips={opponentChips} betAmount={betAmount}/></OponentContainer>
+            <OponentContainer column="7/8" row="1/3"><Opponent status={opponentStatus.thinking} chips={opponentChips} betAmount={betAmount}/></OponentContainer>
             <OponentContainer column="8/9" row="2/4"><Opponent status={opponentStatus.waiting} chips={opponentChips} betAmount={betAmount}/></OponentContainer>
             <RiverContainer>
               <CommunityCards cards = {communityCards}/>
+              <Pot>${pot}</Pot>
             </RiverContainer>
             <PlayerContainer>
-              {/* Cards for testing */}
-              <PlayerCards cards = {playerCards}/>
-              <TestButtons>
-                <button onClick={()=>reset()}>reset</button>
-                <button onClick={()=>deal()}>deal</button>
-                <button onClick={()=>dealFlop()}>flop</button>
-                <button onClick={()=>dealTurn()}>turn</button>
-                <button onClick={()=>dealRiver()}>river</button>
-              </TestButtons>
+              <CardsAndControls>
+                <PlayerCards cards = {playerCards}/>
+                <PlayerControls>
+                  <PlayerButton type={"Raise"}/>
+                  <PlayerButton type={"Call"}/>
+                  <PlayerButton type={"Fold"}/>
+                </PlayerControls>
+              </CardsAndControls>
+              <PlayerCash>${playerCash}</PlayerCash>
             </PlayerContainer>
         </FeltContainer>
     </GameContainer>
@@ -99,24 +105,44 @@ display: flex;
 flex-direction: column;
 align-items: center;
 justify-content: center;
-// border: solid;
-// border-color: red;
 `
 const RiverContainer = styled.div`
 grid-column: 3/7;
 grid-row: 2/4;
 display: flex;
+flex-direction: column;
 align-items: center;
 justify-content: center;
+gap: 10px;
+`
+
+const Pot = styled.div`
+`
+const PlayerCash = styled.div`
 `
 
 const PlayerContainer = styled.div`
 grid-column: 1/9;
 grid-row: 4/5;
-display: flex;
+display:flex;
 flex-direction: column;
 align-items: center;
 justify-content: center;
+gap: 5px;
+`
+
+const CardsAndControls = styled.div`
+display: flex;
+align-items: center;
+justify-content: center;
+gap: 5px;
+`
+
+const PlayerControls = styled.div`
+grid-column: 3/4;
+grid-row: 1/2;
+display: flex;
+flex-direction: column;
 gap: 5px;
 `
 
