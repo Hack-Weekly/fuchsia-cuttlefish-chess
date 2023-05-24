@@ -1,11 +1,13 @@
-import { closePool } from "./client";
-import User from "../models/user";
-import { query } from "express";
+const {closePool, openPool } = require("./client");
+const { User } = require("../models/user");
+const { query } = require("express");
 /**
  * 
  * @param {User} User 
  */
-export const signin = (user, pool) => {
+
+const pool = openPool();
+const signin = (user, pool) => {
     
 
     const query = {
@@ -27,8 +29,34 @@ export const signin = (user, pool) => {
     });
 } 
 
-export const signup = (user, pool) => {
+const signup = (user, pool) => {
 
+    return new Promise((resolve, reject) => {
+        const query = {
+            name: "signup-user",
+            text: "INSERT INTO user(username, password) VALUES ($1, $2)",
+            values: [user.getUsername(), user.getPassword()]
+        }
+
+        pool.query(query, (err, res) => {
+            if (err) {
+                console.error(err);
+                reject(err);
+            } else {
+                signin(user).then(user => {
+                    if (err) {
+                        console.error(err);
+                        reject(err)
+                    } else {
+                        signin(user).then(user => {
+                            resolve(user)
+                        })
+                    }
+                })
+            }
+        })
+    })
+    /*
     const query = {
         name: "signup-user",
         text: "INSERT INTO user(username, password) VALUES ($1, $2)",
@@ -44,10 +72,11 @@ export const signup = (user, pool) => {
             return user;
         }
     })
+    */
 
 }
 
-export const deleteUser = (username, password) => {
+const deleteUser = (username, password) => {
     const query = {
         name: "delete-user",
         text: "DELETE FROM user WHERE username = $1, password = $2",
@@ -65,7 +94,7 @@ export const deleteUser = (username, password) => {
     })
 }
 
-export const selectUser = () => {
+const selectUser = () => {
     const query = {
         name: "select-user",
         text: "SELECT * FROM user WHERE userId = $1",
@@ -83,9 +112,8 @@ export const selectUser = () => {
     })
 }
 
-export const selectAllUsers = () => {
-    const query = {
-        name: "select-all-users",
+const selectAllUsers = () => {
+    var query = {
         text: "SELECT * FROM user"
     }
 
@@ -99,3 +127,5 @@ export const selectAllUsers = () => {
         }
     })
 }
+
+module.exports = {signin, signup, deleteUser, selectUser, selectAllUsers}
