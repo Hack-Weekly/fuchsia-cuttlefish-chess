@@ -6,7 +6,7 @@
  * @constructor constructor
  * @constructor
  */
-export default class User {
+class User {
     #userId
     #username
     #password
@@ -30,20 +30,6 @@ export default class User {
                 this.setPassword(usernameOrPassword);
             }
         }
-    }
-
-
-    constructor(username) {
-        this.setUsername(username);
-    }
-
-    constructor(username, password) {
-        this.setUsername(username);
-        this.setPassword(password);
-    }
-
-    constructor(userId, username, password) {
-        this.setUserId(userId);
     }
 
     getUserId() {
@@ -70,3 +56,5 @@ export default class User {
         this.#password = password;
     }
 }
+
+module.exports = {User}
