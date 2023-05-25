@@ -11,6 +11,7 @@ const Deck = require("./models/deck")
 const userRoutes = require('./routes/userRoutes.js')
 
 const app = express();
+app.use(express.json());
 app.use('/user', userRoutes);
 const server = http.createServer(app);
 var ws = new WebSocket.Server({ server });

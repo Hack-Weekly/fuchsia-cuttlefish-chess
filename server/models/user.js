@@ -11,25 +11,11 @@ class User {
     #username
     #password
     
-    //Apparently javascript doesn't support multiple constructors when I asked for improvements to my code in gpt
-    //This allows for passing all permutations of users such as only id, username and password, etc.
-    constructor(userIdOrUsername, usernameOrPassword, password) {
-        if (typeof userIdOrUsername === 'number') {
-            // If the first argument is a number, assume it's a userId
-            this.setUserId(userIdOrUsername);
-            if (usernameOrPassword && password) {
-                // If there are two more arguments, assume they're username and password
-                this.setUsername(usernameOrPassword);
-                this.setPassword(password);
-            }
-        } else {
-            // If the first argument is not a number, assume it's a username
-            this.setUsername(userIdOrUsername);
-            if (usernameOrPassword) {
-                // If there's another argument, assume it's a password
-                this.setPassword(usernameOrPassword);
-            }
-        }
+    //Changed this to a more simple constructor that will just pass a blank string for password where its not needed
+    constructor(userid, username, password) {
+        this.setUserId(userid);
+        this.setUsername(username);
+        this.setPassword(password);
     }
 
     getUserId() {
@@ -54,6 +40,18 @@ class User {
 
     setPassword(password) {
         this.#password = password;
+    }
+
+    toJSON() {
+        const jsonObj = {
+            userId: this.getUserId(),
+            username: this.getUsername()
+        };
+        if (this.getPassword()) {
+            jsonObj.password = this.getPassword();
+        }
+
+        return jsonObj;
     }
 }
 

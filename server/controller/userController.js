@@ -1,4 +1,4 @@
-const {closePool, openPool } = require("./client");
+const {closePool, openPool, openClient } = require("./client");
 const { User } = require("../models/user");
 const { query } = require("express");
 /**
@@ -6,13 +6,16 @@ const { query } = require("express");
  * @param {User} User 
  */
 
+
+//Some reason client and pool work on diffenent language. Need to look into it its for a specific sublanguage.
 const pool = openPool();
-const signin = (user, pool) => {
+const client = openClient();
+const signin = (user) => {
     
 
     const query = {
         name: "signin-user",
-        text: "SELECT userId, username, password FROM user WHERE username = $1, password = $2",
+        text: "SELECT userId, username, password FROM users WHERE username = $1, password = $2",
         values: [user.getUsername(), user.getPassword()]
     }
     
@@ -29,57 +32,31 @@ const signin = (user, pool) => {
     });
 } 
 
-const signup = (user, pool) => {
-
-    return new Promise((resolve, reject) => {
-        const query = {
-            name: "signup-user",
-            text: "INSERT INTO user(username, password) VALUES ($1, $2)",
-            values: [user.getUsername(), user.getPassword()]
-        }
-
-        pool.query(query, (err, res) => {
-            if (err) {
-                console.error(err);
-                reject(err);
-            } else {
-                signin(user).then(user => {
-                    if (err) {
-                        console.error(err);
-                        reject(err)
-                    } else {
-                        signin(user).then(user => {
-                            resolve(user)
-                        })
-                    }
-                })
-            }
-        })
-    })
-    /*
+const signup = (user) => {
     const query = {
-        name: "signup-user",
-        text: "INSERT INTO user(username, password) VALUES ($1, $2)",
+        text: "INSERT INTO users(username, password) VALUES ($1, $2)",
         values: [user.getUsername(), user.getPassword()]
     }
 
+    console.log(query)
     pool.query(query, (err, res) => {
         if (err) {
             console.error(err);
             return;
         } else {
-            const user = signin(user, pool);
-            return user;
+            if(signin(user, client)) {
+                console.error("User already exists")
+            }
+            return res.User;
+
         }
     })
-    */
-
 }
 
 const deleteUser = (username, password) => {
     const query = {
         name: "delete-user",
-        text: "DELETE FROM user WHERE username = $1, password = $2",
+        text: "DELETE FROM users WHERE username = $1, password = $2",
         values: [User.getUsername(), User.getPassword()]
     }
 
@@ -94,38 +71,57 @@ const deleteUser = (username, password) => {
     })
 }
 
-const selectUser = () => {
+const selectUser = async (userId) => {
+    console.log("Message")
     const query = {
-        name: "select-user",
-        text: "SELECT * FROM user WHERE userId = $1",
-        values: [User.getUserId()]
+        text: "SELECT * FROM users WHERE userId = $1",
+        values: [userId]
     }
 
-    pool.query(query, (err, res) => {
-        if (err) {
-            console.error(err);
+    try {
+        const res = await pool.query(query);
+        if(res.rows.length == 0) {
+            console.error("No user found");
             return;
-        } else {
-            const data = res.rows[0];
-            return new User(data.userId, data.username);
         }
-    })
+        else {
+            console.log("Breakpoint")
+            const user = new User(res.rows[0].userid, res.rows[0].username, "");
+            return user;
+        }
+    } catch (error) {
+        console.error(error)
+        return;
+    }
 }
 
-const selectAllUsers = () => {
+const selectAllUsers = async () => {
+    console.log("Route select all");
     var query = {
-        text: "SELECT * FROM user"
+        text: "SELECT * FROM users"
     }
 
-    pool.query(query, (err, res) => {
-        if (err) {
-            console.error(err);
-            return;
+    try {
+        const res = await pool.query("SELECT * FROM users");
+        const users = [];
+        
+        res.rows.map(row => {
+            const user = new User(row.userid, row.username, "");
+            users.push(user);
+        });
+
+        if (users.length > 0) {
+            const test = users[0];
+            console.log(test.getUsername())
+            console.log(test.toJSON());
         } else {
-            const users = res.rows.map(row => new User(row.userId, row.username, row.password));
-            return users;
+            console.log("No uses found.");
         }
-    })
+        return users;
+    } catch (error) {
+        console.error(error);
+        throw error;
+    }
 }
 
 module.exports = {signin, signup, deleteUser, selectUser, selectAllUsers}

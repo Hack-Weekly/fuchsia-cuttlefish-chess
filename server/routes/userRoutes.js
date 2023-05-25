@@ -20,8 +20,9 @@ router.get('/signin', (req, res) => {
 })
 
 router.post('/signup', (req, res) => {
+    console.log("Here")
     try {
-        const requestUser = new User(req.body.username, req.body.password);
+        const requestUser = new User(0, req.body.username, req.body.password);
         const user = signup(requestUser);
         res.send(user);
     } catch (error) {
@@ -29,20 +30,21 @@ router.post('/signup', (req, res) => {
     }
 })
 
-router.get('/:userId', (req, res) => {
+router.get('/:userId', async (req, res) => {
+    console.log("Select user route")
     try {
-        const requestUser = new User(req.params['userId']);
-        const user = selectUser(requestUser);
+        const userid = parseInt(req.params.userId);
+        const user = await selectUser(userid);
         res.send(user);
     } catch (error) {
         res.status(400)
     }
 })
 
-router.get('/', (req, res) => {
+router.get('/', async (req, res) => {
     try {
-        const user = selectAllUsers();
-        res.send(user);
+        const users = await selectAllUsers();
+        res.send(users);
     } catch (error) {
         console.error(error)
         res.status(400)

@@ -3,6 +3,7 @@ const Deck = require("./deck")
 class game {
     #numOfPlayers
     #deck;
+    
 
     constructor(numOfPlayers) {
     }
