@@ -14,8 +14,12 @@ const app = express();
 app.use(express.json());
 app.use('/user', userRoutes);
 const server = http.createServer(app);
-var ws = new WebSocket.Server({ server });
+var wss = new WebSocket.Server({ server });
 
+wss.on('connection', (ws) => {
+    //on connection assign unique
+    ws.id = uuid.v4()
+})
 
 server.listen(3000, () => {
     console.log("Listening on http://localhost:3000")
