@@ -3,6 +3,7 @@ const express = require("express")
 //const cors = require("cors")
 const http = require("http")
 const WebSocket = require('ws')
+const uuid = require("uuid")
 
 //Import other locally stored javascript methos classes etc
 const card = require('./models/card')
@@ -12,22 +13,20 @@ const Game = require("./models/game")
 const app = express();
 app.use(express.json());
 app.use('/user', userRoutes);
+
+const game = new Game(1);
+
+
 const server = http.createServer(app);
+
+
 var wss = new WebSocket.Server({ server });
-
-//array of instances of games
-games = [];
-
-for(i = 0; i < 5; i++) {
-    games.push(new Game(i))
-}
-
 
 wss.on('connection', (ws) => {
     //on connection assign unique id
     let id = uuid.v4();
     ws.id = id;
-    let game = games[0]
+    let game = new Game(id)
 
     game.playerJoins(id);
     ws.on('close', () => {
@@ -35,6 +34,7 @@ wss.on('connection', (ws) => {
         console.log( `Connection ${ws.id} closed.` );
     });
 });
+
 
 server.listen(3000, () => {
     console.log("Listening on http://localhost:3000")

@@ -2,12 +2,35 @@ import styled from 'styled-components';
 import { Link } from 'react-router-dom'
 import { TiArrowBackOutline } from 'react-icons/ti'
 import CommunityCards from '../components/game/CommunityCards';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import PlayerCards from '../components/game/PlayerCards';
 import Opponent from '../components/game/Opponent';
 import PlayerButton from '../components/game/PlayerButton';
 
 function InsideRoom() {
+  const [ws, setWs] = useState(null);
+
+  useEffect(() => {
+
+    const wsInstance = new WebSocket("ws://localhost:3000");
+
+    wsInstance.onopen = () => {
+      console.log('Connected to the WebSocket server.');
+    };
+
+    wsInstance.onclose = () => {
+      console.log('Disconnected from the WebSocket server.');
+    };
+
+
+
+    return () => {
+      if (wsInstance) {
+        wsInstance.close();
+        console.log('WebSocket connection closed.');
+      }
+    };
+  }, []);
 
   const [communityCards, setCommunityCards] = useState(preFlop);
   const [playerCards, setPlayerCards] = useState(preDeal);
