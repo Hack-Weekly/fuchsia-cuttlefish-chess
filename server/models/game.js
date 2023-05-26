@@ -1,6 +1,8 @@
 const Deck = require("./deck")
 
-class game {
+class Game {
+    //socket identifier for 
+    #gameid
     //Determines number of hands to render
     #numOfPlayers = 0;
     //gets id values in an array for 
@@ -8,10 +10,11 @@ class game {
     //controlls the layout of the player's ui if not on bet it grays it out
     //if one player puts and overlay to wait for player.
     #state = "empty";
-    #round = ""
+    #round = 1
     
 
-    constructor(numOfPlayers) {
+    constructor(gameid) {
+        this.#gameid = gameid;
         this.newGame();
     }
 
@@ -31,6 +34,6 @@ class game {
         }
         
     }
-
-
 }
+
+module.exports = { Game }
