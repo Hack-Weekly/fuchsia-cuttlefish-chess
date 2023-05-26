@@ -1,10 +1,6 @@
 
 /**
- * @private userId
- * @private username
- * @private password
- * @constructor constructor
- * @constructor
+ * Class is for any 
  */
 class User {
     #userId

@@ -15,10 +15,11 @@ class Game {
     //object from the Deck class
     #deck
 
-    
+
 
     //Determines number of hands to render and when to refuse connections
-    #numOfPlayers = 6;
+    #numOfPlayers = 0;
+    #maxPlayers = 7;
     //gets id values in an array for 
     #listOfPlayers = [];
 
@@ -37,12 +38,15 @@ class Game {
     }
 
     playerJoins(playerid) {
+        if(this.#numOfPlayers >= this.#maxPlayers)
         this.#listOfPlayers.push(playerid);
     }
 
     playerLeaves(playerid) {
         this.#listOfPlayers = this.#listOfPlayers.filter(item => item !== playerid);
     }
+
+    getStatus()
 
 
     newGame() {

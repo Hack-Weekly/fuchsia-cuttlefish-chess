@@ -11,7 +11,6 @@ function InsideRoom() {
   const [ws, setWs] = useState(null);
 
   useEffect(() => {
-
     const wsInstance = new WebSocket("ws://localhost:3000");
 
     wsInstance.onopen = () => {
@@ -20,6 +19,10 @@ function InsideRoom() {
 
     wsInstance.onclose = () => {
       console.log('Disconnected from the WebSocket server.');
+    };
+
+    wsInstance.onerror = (error) => {
+      console.error('WebSocket encountered an error:', error);
     };
 
 

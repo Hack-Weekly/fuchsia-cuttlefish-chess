@@ -27,6 +27,7 @@ wss.on('connection', (ws) => {
     let id = uuid.v4();
     ws.id = id;
     let game = new Game(id)
+    console.log( `Connection ${ws.id} open.` );
 
     game.playerJoins(id);
     ws.on('close', () => {
