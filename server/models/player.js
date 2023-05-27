@@ -6,7 +6,7 @@
 
 class Player {
 
-    static #actions = ["check", "fold", "raise", "bet", "waiting", "thinking"];
+    static #actions = ["check", "fold", "raise","thinking", "out", "allin"];
 
     #status;
 
@@ -14,11 +14,14 @@ class Player {
     #playerid;
 
     #amount;
+    #bet
     #tablePosition;
 
     #hand = [];
     constructor(playerid, startingAmount, position) {
-        this.#playerid
+        this.#playerid;
+        this.#amount = startingAmount;
+        this.#tablePosition = position;
     }
 
     dealHand(cards) {
@@ -26,12 +29,11 @@ class Player {
             this.#hand.push(card);
         });
     }
-
-    showHand(id) {
-        return null;
+    showHand() {
+        return this.#hand;
     }
     getStatus() {
-        return this.#status
+        return this.#status;
     }
     setStatus(value) {
         switch (value) {
@@ -57,7 +59,6 @@ class Player {
                 this.#status = Player.#actions[value]
                 break;              
             default:
-                return null;
                 break;
         }
 
@@ -68,6 +69,36 @@ class Player {
     }
     setID(playerid) {
         this.#playerid = playerid;
+    }
+
+    addCash(amount) {
+        this.#amount += amount;
+    }
+    
+    removeCash(amount) {
+        if (this.#amount >= amount) {
+            this.#amount -= amount;
+            return true;
+        } else {
+            return false;
+        }
+    }
+    getCash() {
+        return this.#amount;
+    }
+
+    placeBet(bet, minimum) {
+        if(bet > minimum) {
+            //if bet is higher than current amount
+            if(bet > this.getCash()) {
+                //set all in
+                this.setStatus(2);
+            }
+            //set status to raise
+            this.setStatus(2);
+
+        }
+        return 
     }
 }
 
