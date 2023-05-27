@@ -37,16 +37,26 @@ class Game {
         this.newGame();
     }
 
+    //returns true if they can join
     playerJoins(playerid) {
-        if(this.#numOfPlayers >= this.#maxPlayers)
-        this.#listOfPlayers.push(playerid);
+        if(this.#numOfPlayers >= this.#maxPlayers) {
+            return false;
+        }
+        else {
+            this.#numOfPlayers++;
+            this.#listOfPlayers.push(playerid);
+            return true;
+        }
+        
     }
 
     playerLeaves(playerid) {
         this.#listOfPlayers = this.#listOfPlayers.filter(item => item !== playerid);
     }
+    //JSON message to emit to players about the game. Their hand, round, pot, bet, and other information
+    getStatus(playerid) {
 
-    getStatus()
+    }
 
 
     newGame() {

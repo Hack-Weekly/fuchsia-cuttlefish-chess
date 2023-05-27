@@ -4,12 +4,3 @@
  */
 
 
-class Player {
-    this.#playerid = {
-        
-    }
-
-    constructor() {
-
-    }
-}

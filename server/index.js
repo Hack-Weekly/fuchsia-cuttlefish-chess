@@ -22,14 +22,20 @@ const server = http.createServer(app);
 
 var wss = new WebSocket.Server({ server });
 
+
 wss.on('connection', (ws) => {
     //on connection assign unique id
     let id = uuid.v4();
     ws.id = id;
-    let game = new Game(id)
-    console.log( `Connection ${ws.id} open.` );
+    
 
-    game.playerJoins(id);
+    console.log( `Connection ${ws.id} open.` );
+    if(!game.playerJoins(id)) {
+        ws.close(1000, "Game is full")
+        console.log( `Refused connection ${ws.id}: game is full` );
+        return;
+    }
+    
     ws.on('close', () => {
         game.playerLeaves(id)
         console.log( `Connection ${ws.id} closed.` );
