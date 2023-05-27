@@ -25,6 +25,10 @@ class Deck {
         });
 
     }
+
+    drawCard() {
+        return this.#stack.shift()
+    }
     swap(i, j) {
         //const temp = this.#deck[i];
     }

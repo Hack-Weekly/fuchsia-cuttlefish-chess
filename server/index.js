@@ -31,13 +31,13 @@ wss.on('connection', (ws) => {
 
     console.log( `Connection ${ws.id} open.` );
     if(!game.playerJoins(id)) {
-        ws.close(1000, "Game is full")
+        ws.close(1000, "Game is full");
         console.log( `Refused connection ${ws.id}: game is full` );
         return;
     }
     
     ws.on('close', () => {
-        game.playerLeaves(id)
+        game.playerLeaves(id);
         console.log( `Connection ${ws.id} closed.` );
     });
 });

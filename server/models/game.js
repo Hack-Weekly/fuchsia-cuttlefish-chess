@@ -73,15 +73,50 @@ class Game {
         }
         this.#listOfPlayers = this.#listOfPlayers.filter(player => player.getID() !== playerid);
     }
+
+    isThinking(playerid) {
+        let player = this.#listOfPlayers.find(player => player.getID() === playerid);
+
+        if(!player || player.getPlayerStatus() != "thinking") return false;
+
+        return true;
+    }
     //JSON message to emit to players about the game. Their hand, round, pot, bet, and other information
     getHandStatus(playerid) {
-
+        gets
+        let player = this.#listOfPlayers.find(player => player.getID() === playerid);
     }
     getPlayerStatus() {
         newListOfPlayers = []
-        this.#listOfPlayers.forEach(element => {
-            
+        return this.#listOfPlayers.map(player => {
+            player.setID(8);
         });
+    }
+
+    // websocketid and the switch/case value for state. Does nothing if its not their turn.
+    setPlayerStatus(playerid, value) {
+        this.#listOfPlayers = this.#listOfPlayers.map(player => {
+            if(player.getID() == playerid) {
+                if(player.getPlayerStatus() === "thinking") {
+
+                }
+            }
+        })
+        return false
+    }
+
+    /*
+        Moves the blinds after a game
+    */
+    moveBlinds() {
+        if(this.#bblind == this.#numOfPlayers - 1) {
+            this.#lblind = this.#bblind;
+            this.#bblind = 0;
+        }
+        else if(this.#lblind == this.#numOfPlayers - 1) {
+            this.#lblind = this.#bblind;
+            this.#bblind++;
+        }
     }
 
 
@@ -90,6 +125,15 @@ class Game {
         for(let i = 0; i < 5; i++) {
             this.#deck.shuffle();
         }
+
+        for(let i = 0; i < 5; i++) {
+            roundFinished = false; 
+            this.#listOfPlayers.forEach
+            if(!roundFinished) {
+
+            }
+        }
+        this.hands
     }
 }
 
