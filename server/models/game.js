@@ -1,9 +1,22 @@
 const Deck = require("./deck")
-
+const Player = require("./player")
 class Game {
 
-    //socket identifier for actions user takes
-    static #actions = ["check", "fold", "raise"]
+    
+
+    /* 
+        Default setting. Basically a new player won't be able to join if the table has a game in progress
+    */
+    #eliminationMode = true
+    #inProgress = false
+    
+    /*
+        If not using this setting the player will use this boolean to wait to connect using this
+    */
+    #inRound = false;
+
+
+    #startingCash = 5000
 
     //keeps track of which user is anting up all or half
     #bblind
@@ -43,19 +56,32 @@ class Game {
             return false;
         }
         else {
+            //sets the table position to
+            this.#listOfPlayers.push(
+                new Player(playerid, this.#startingCash, this.#numOfPlayers)
+            );
             this.#numOfPlayers++;
-            this.#listOfPlayers.push(playerid);
             return true;
         }
         
     }
 
     playerLeaves(playerid) {
-        this.#listOfPlayers = this.#listOfPlayers.filter(item => item !== playerid);
+        this.#numOfPlayers--;
+        if(this.#eliminationMode) {
+            
+        }
+        this.#listOfPlayers = this.#listOfPlayers.filter(player => player.getID() !== playerid);
     }
     //JSON message to emit to players about the game. Their hand, round, pot, bet, and other information
-    getStatus(playerid) {
+    getHandStatus(playerid) {
 
+    }
+    getPlayerStatus() {
+        newListOfPlayers = []
+        this.#listOfPlayers.forEach(element => {
+            
+        });
     }
 
 

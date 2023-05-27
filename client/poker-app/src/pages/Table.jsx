@@ -17,8 +17,11 @@ function InsideRoom() {
       console.log('Connected to the WebSocket server.');
     };
 
-    wsInstance.onclose = () => {
+    wsInstance.onclose = (event) => {
       console.log('Disconnected from the WebSocket server.');
+      if(event.code === 1000) {
+        alert("Poker Table is full!")
+      }
     };
 
     wsInstance.onerror = (error) => {
@@ -37,8 +40,8 @@ function InsideRoom() {
 
   const [communityCards, setCommunityCards] = useState(preFlop);
   const [playerCards, setPlayerCards] = useState(preDeal);
-  const [pot, setPot] = useState(200);
-  const [playerCash, setPlayerCash] = useState(5000);
+  const [pot, setPot] = useState(0);
+  const [playerCash, setPlayerCash] = useState(0);
 
 
   // TESTING
