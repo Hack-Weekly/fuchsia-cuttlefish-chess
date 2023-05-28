@@ -29,13 +29,22 @@ wss.on('connection', (ws) => {
     ws.id = id;
     
 
-    console.log( `Connection ${ws.id} open.` );
+    
     if(!game.playerJoins(id)) {
         ws.close(1000, "Game is full");
         console.log( `Refused connection ${ws.id}: game is full` );
         return;
     }
-    
+    console.log( `Connection ${ws.id} open.` );
+
+    ws.on('message', (message) => {
+        try {
+            let data = JSON.parse(message);
+            game.setPlayerStatus(data.playerid, data.action);
+        } catch (err) {
+            console.error(`Failed to process message: ${err}`);
+        }
+    });
     ws.on('close', () => {
         game.playerLeaves(id);
         console.log( `Connection ${ws.id} closed.` );

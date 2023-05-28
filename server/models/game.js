@@ -1,8 +1,7 @@
 const Deck = require("./deck")
 const Player = require("./player")
+const Hand = require('pokersolver').Hand;
 class Game {
-
-    
 
     /* 
         Default setting. Basically a new player won't be able to join if the table has a game in progress
@@ -10,10 +9,6 @@ class Game {
     #eliminationMode = true
     #inProgress = false
     
-    /*
-        If not using this setting the player will use this boolean to wait to connect using this
-    */
-    #inRound = false;
 
 
     #startingCash = 5000
@@ -35,12 +30,14 @@ class Game {
     #maxPlayers = 7;
     //gets id values in an array for 
     #listOfPlayers = [];
+    #winners = [];
+    #river = [];
+    #pot = 0
 
-    //hands
-    #hand
 
     //controlls the layout of the player's ui if not on bet it grays it out
     //if one player puts and overlay to wait for player.
+
     #state = "empty";
     #round = 1
     
@@ -81,11 +78,6 @@ class Game {
 
         return true;
     }
-    //JSON message to emit to players about the game. Their hand, round, pot, bet, and other information
-    getHandStatus(playerid) {
-        gets
-        let player = this.#listOfPlayers.find(player => player.getID() === playerid);
-    }
     getPlayerStatus() {
         newListOfPlayers = []
         return this.#listOfPlayers.map(player => {
@@ -122,6 +114,70 @@ class Game {
         }
     }
 
+    convertCards(cards) {
+        return cards.map(card => card.getCardValue());
+    }
+
+    /*
+    this is really badly implemented. Will write a better evaluation algorithim in the future
+    */
+    evaluate() {
+        let jsonObject = {
+            hands: []
+        }
+        this.#listOfPlayers.forEach(player => {
+            if(player.getStatus() != "fold") {
+                this.#winners.push(player)
+            }
+        });
+
+        let handArray = []
+
+        for(let i = 0; i < this.#winners.length; i++) {
+            this.#river.forEach(card => {
+                handArray.push(card.getCardValue())
+            })
+            this.#winners[i].getHandStatus().forEach(card => {
+                handArray.push(card.getCardValue())
+            })
+
+            var handCards = convertCards(hand1Array);
+            var hand = Hand.solve(handCards);
+            this.#winners[i].setRank(hand.rank);
+        }
+
+        this.#winners.sort((player1, player2) => player2.getRank() - player1.getRank());
+    }
+    //adds to the balance in the list of players field
+
+    addWinnings(playerid, value) {
+        this.#listOfPlayers.forEach(player => {
+            if(player.getID() === playerid) {
+                player.addCash(value);
+            }
+        })
+    }
+
+    getWinner() {
+        let isTied = true;
+        let  PotSplit = 1;
+        let i = 0
+        while(isTied) {
+            if(this.#winners[i].getRank() === this.#winners[i+1]) {
+                PotSplit++;
+            }
+            else {
+                isTied = false;
+            }
+        }
+        if(PotSplit > 1) {
+            
+        }
+        for(let i = 0; i < PotSplit; i++) {
+            this.addWinnings(this.#winners[i].getID, (this.#pot/PotSplit));
+        }
+    }
+    
 
     newGame() {
         this.#deck = new Deck();
@@ -131,12 +187,35 @@ class Game {
 
         for(let i = 0; i < 5; i++) {
             let roundFinished = false; 
-            this.#listOfPlayers.forEach
             if(!roundFinished) {
 
             }
         }
         this.hands
+    }
+    
+    toJSON(playerid) {
+        let hand = this.getHandStatus(playerid)
+        let river
+        const jsonObject = {
+            numOfPlayers: this.#numOfPlayers,
+            maxPlayers: this.#maxPlayers,
+            round: this.#round,
+            hand: [],
+            pot: this.#pot,
+            river: [],
+            players: []
+        };
+
+        for(let i = 0; i < this.#listOfPlayers.length; i++) {
+            const player = this.#listOfPlayers[i];
+            const playerObject = {
+                balance: player.getCash(),
+                bet: player.getBet(),
+                tablePosition: player.getTablePosition(),
+                hand: []
+            }
+        }
     }
 }
 

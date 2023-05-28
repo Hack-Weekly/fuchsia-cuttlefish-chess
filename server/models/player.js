@@ -18,6 +18,7 @@ class Player {
     #tablePosition;
 
     #hand = [];
+    #rank;
     constructor(playerid, startingAmount, position) {
         this.#playerid;
         this.#amount = startingAmount;
@@ -36,32 +37,17 @@ class Player {
         return this.#status;
     }
     setStatus(value) {
-        switch (value) {
-            case 0:
-                this.#status = Player.#actions[value]
-                break;
-            case 1:
-                this.#status = Player.#actions[value]
-                break;
-            case 2:
-                this.#status = Player.#actions[value]
-                break;
-            case 3:
-                this.#status = Player.#actions[value]
-                break;
-            case 4:
-                this.#status = Player.#actions[value]
-                break;
-            case 5:
-                this.#status = Player.#actions[value]
-                break;
-            case 6:
-                this.#status = Player.#actions[value]
-                break;              
-            default:
-                break;
+        //Default to thinking for any out of range numbers
+        if(value < 0 || value > 5) {
+            this.#status = Player.#actions[4];
         }
-
+        //Default to thinking for any non numbers and floats
+        if (!isNaN(value) || !Number.isInteger(value)) {
+            this.#status = Player.#actions[4];
+        }
+        else {
+            this.#status = Player.#actions[value];
+        }
     }
 
     getID() {
@@ -71,6 +57,12 @@ class Player {
         this.#playerid = playerid;
     }
 
+    getRank() {
+        return this.#rank;
+    }
+    setRank(rank) {
+        this.#rank = rand
+    }
     addCash(amount) {
         this.#amount += amount;
     }
@@ -96,9 +88,19 @@ class Player {
                 this.#bet = this.#amount;
             }
             this.#bet = bet
-            th
             return true
         }
+    }
+
+    getBet() {
+        return this.#bet;
+    }
+    setBet() {
+        return this.#bet
+    }
+
+    getTablePosition() {
+        return this.#tablePosition;
     }
 }
 

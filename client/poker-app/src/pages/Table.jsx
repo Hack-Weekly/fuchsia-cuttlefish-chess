@@ -8,8 +8,30 @@ import Opponent from '../components/game/Opponent';
 import PlayerButton from '../components/game/PlayerButton';
 
 function InsideRoom() {
-  const [ws, setWs] = useState(null);
 
+  const [ws, setWs] = useState(null);
+  const [communityCards, setCommunityCards] = useState(preFlop);
+  const [playerCards, setPlayerCards] = useState(preDeal);
+  const [pot, setPot] = useState(0);
+  const [playerCash, setPlayerCash] = useState(0);
+
+  // TESTING
+  const reset = ()=>{
+    setPlayerCards(preDeal);
+    setCommunityCards(preFlop)
+  }
+  const deal = ()=>{
+    setPlayerCards(postDeal);
+  }
+  const dealFlop = ()=>{
+    setCommunityCards(flop);
+  }
+  const dealTurn = ()=>{
+    setCommunityCards(turn);
+  }
+  const dealRiver = ()=>{
+    setCommunityCards(river);
+  }
   useEffect(() => {
     const wsInstance = new WebSocket("ws://localhost:3000");
 
@@ -37,30 +59,6 @@ function InsideRoom() {
       }
     };
   }, []);
-
-  const [communityCards, setCommunityCards] = useState(preFlop);
-  const [playerCards, setPlayerCards] = useState(preDeal);
-  const [pot, setPot] = useState(0);
-  const [playerCash, setPlayerCash] = useState(0);
-
-
-  // TESTING
-  const reset = ()=>{
-    setPlayerCards(preDeal);
-    setCommunityCards(preFlop)
-  }
-  const deal = ()=>{
-    setPlayerCards(postDeal);
-  }
-  const dealFlop = ()=>{
-    setCommunityCards(flop);
-  }
-  const dealTurn = ()=>{
-    setCommunityCards(turn);
-  }
-  const dealRiver = ()=>{
-    setCommunityCards(river);
-  }
 
   const opponentStatus = {
     fold:"fold",
