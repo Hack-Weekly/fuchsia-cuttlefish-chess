@@ -95,14 +95,17 @@ class Game {
 
     // websocketid and the switch/case value for state. Does nothing if its not their turn.
     setPlayerStatus(playerid, value) {
-        this.#listOfPlayers = this.#listOfPlayers.map(player => {
-            if(player.getID() == playerid) {
-                if(player.getPlayerStatus() === "thinking") {
-
-                }
-            }
-        })
-        return false
+        let player = this.#listOfPlayers.find(player => player.getID() === playerid);
+        
+        if(!player) return false
+        
+        if(player.getPlayerStatus() === "thinking") {
+            let timeout = setTimeout(() => {
+                if(player.get)
+                player.setStatus(Player.actions.indexOf("check"));
+            })
+        }
+        return false;
     }
 
     /*
@@ -127,7 +130,7 @@ class Game {
         }
 
         for(let i = 0; i < 5; i++) {
-            roundFinished = false; 
+            let roundFinished = false; 
             this.#listOfPlayers.forEach
             if(!roundFinished) {
 

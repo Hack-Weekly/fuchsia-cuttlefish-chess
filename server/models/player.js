@@ -88,17 +88,17 @@ class Player {
     }
 
     placeBet(bet, minimum) {
-        if(bet > minimum) {
-            //if bet is higher than current amount
-            if(bet > this.getCash()) {
-                //set all in
-                this.setStatus(2);
-            }
-            //set status to raise
-            this.setStatus(2);
-
+        if(bet < minimum || bet < 0) {
+            return false; 
         }
-        return 
+        if(bet > minimum) {
+            if(bet > this.#amount) {
+                this.#bet = this.#amount;
+            }
+            this.#bet = bet
+            th
+            return true
+        }
     }
 }
 
