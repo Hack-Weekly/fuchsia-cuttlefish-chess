@@ -6,7 +6,7 @@
 
 class Player {
 
-    static #actions = ["check", "fold", "raise","thinking", "out", "allin"];
+    static #actions = ["check", "fold", "raise","thinking", "out", "allin", "waiting"];
 
     #status;
 
@@ -20,7 +20,7 @@ class Player {
     #hand = [];
     #rank;
     constructor(playerid, startingAmount, position) {
-        this.#playerid;
+        this.#playerid = playerid;
         this.#amount = startingAmount;
         this.#tablePosition = position;
     }
@@ -61,7 +61,7 @@ class Player {
         return this.#rank;
     }
     setRank(rank) {
-        this.#rank = rand
+        this.#rank = rank
     }
     addCash(amount) {
         this.#amount += amount;
@@ -95,12 +95,15 @@ class Player {
     getBet() {
         return this.#bet;
     }
-    setBet() {
-        return this.#bet
+    setBet(bet) {
+        this.#bet = bet;
     }
 
     getTablePosition() {
         return this.#tablePosition;
+    }
+    setTablePosition(position) {
+        this.#tablePosition = position;
     }
 }
 
