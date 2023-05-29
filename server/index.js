@@ -15,9 +15,6 @@ const app = express();
 app.use(express.json());
 //app.use('/user', userRoutes);
 
-const game = new Game(1);
-
-
 const server = http.createServer(app);
 
 
@@ -36,9 +33,10 @@ function broadcastStatusChange(wss, playerId) {
     });
 }
 
-var wss = new WebSocket.Server({ server });
+const wss = new WebSocket.Server({ server });
+const game = new Game(1);
 
-wss.on('connection', async (ws) => {
+wss.on('connection', (ws) => {
     //on connection assign unique id
     let id = uuid.v4();
     ws.id = id;
@@ -46,7 +44,7 @@ wss.on('connection', async (ws) => {
 
     
     const playerId = ws.id
-    const success = await game.playerJoins(playerId);
+    const success = game.playerJoins(playerId);
 
     if (!success) {
         ws.close(1001, 'Game is full');
@@ -56,10 +54,12 @@ wss.on('connection', async (ws) => {
 
     console.log( `Connection ${ws.id} open.` );
 
-    ws.on('message', async (message) => {
+    ws.on('message', (message) => {
+
         try {
-            let data = JSON.parse(message);
-            await game.setPlayerStatus(data.playerid, data.action, data.value).catch(error => {
+            let data
+            data = JSON.parse(message);
+                game.setPlayerStatus(data.playerid, data.action, data.value).catch(error => {
                 console.log(`Error setting player status: ${error}`);
             });
 
@@ -69,8 +69,11 @@ wss.on('connection', async (ws) => {
         }
     });
     ws.on('close', () => {
+        if()
         game.playerLeaves(id);
         console.log( `Connection ${ws.id} closed.` );
+        let i = 0;
+        game.list
     });
 });
 
