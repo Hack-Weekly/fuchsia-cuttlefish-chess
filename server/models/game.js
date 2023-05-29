@@ -3,43 +3,31 @@ const Player = require("./player")
 const Hand = require('pokersolver').Hand;
 class Game {
 
-    /* 
-        Default setting. Basically a new player won't be able to join if the table has a game in progress
-    */
-    #inProgress = false
-    
 
-
+    //game settings
     #startingCash = 5000
-
-    //keeps track of which user is anting up all or half
-    #bblind
-    #lblind
-
-    //game identifier for object
-    #gameid
-
-    //object from the Deck class
-    #deck
-
-
-
-    //Determines number of hands to render and when to refuse connections
-    #numOfPlayers = 0;
     #maxPlayers = 7;
-    #playersOut = 0;
-    //gets id values in an array for 
-    #listOfPlayers;
+    #elimination = true;
+
+    //game properties
+
+    #gameid
+    #deck = []
+    #listOfPlayers = [];
     #winners = [];
     #river = [];
-    #pot = 0
+    #pot = 0;
+    #bblind = 1
+    #lblind = 0
+    #startGame = false;
+    //Whenever there is a raise everyone
+    #lastToBet = this.#lblind
 
-
-    //controlls the layout of the player's ui if not on bet it grays it out
-    //if one player puts and overlay to wait for player.
-
-    #state = "empty";
-    #round = 1
+    //holds the id value for the player its accepting inputs for.
+    #bettingPlayer;
+    #round = 0
+    #numOfPlayers = 0;
+    #playersOut = 0;
     
 
     constructor(gameid) {
@@ -47,8 +35,22 @@ class Game {
         this.#listOfPlayers = []
     }
 
+    drawCard() {
+        return this.#deck.shift();
+    }
+    reset() {
+        if(!this.#elimination)  {
+            this.#listOfPlayers = this.#listOfPlayers.filter(
+                player => player.getStatus() === "out")
+            this.#numOfPlayers = this.#listOfPlayers.length
+        }
+        
+        this.#round = 0
+        this.#pot = 0;
+    }
+
     //returns true if they can join
-    async playerJoins(playerid) {
+    playerJoins(playerid) {
         if(this.#numOfPlayers >= this.#maxPlayers) {
             return false;
         }
@@ -58,27 +60,41 @@ class Game {
                 new Player(playerid, this.#startingCash, this.#numOfPlayers)
             );
             this.#numOfPlayers++;
-            if (this.#numOfPlayers === this.#maxPlayers) {
-                try {
-                    await this.newGame();
-                } catch (err) {
-                    console.error(err);
-                    return false;
-                }
-            }
             return true;
         }
     }
 
-    async playerLeaves(playerid) {
-        this.#numOfPlayers--;
-        this.#listOfPlayers = this.#listOfPlayers.filter(player => player.getID() !== playerid);
+    playerLeaves(playerid) {
+        //handles players leaving on elimination mode.
+        //Basically no new players can join until someone wins
+        //this.#numOfPlayers--;
         let i = 0;
         this.#listOfPlayers = this.#listOfPlayers.forEach(player => {
-            player.setTablePosition(i);
-            i++;
-            this.#playersOut++;
-        }) 
+            //sets player status to out on disconnect
+            //players are removed at the end of the hand or game depending on mode
+            if(player.getID() == playerid) {
+                //set to out
+                player.getStatus(4)
+            }
+            else if(player.getStatus() == "out") {
+                //do nothing if already out
+                //should only matter if in elimination mode
+            }
+            else {
+                //update the table position
+                player.setTablePosition(i);
+                i++;
+                //if the blind is ever
+                if(this.#bblind == (this.#numOfPlayers - this.#playersOut ) - 1 
+                    || this.#lblind == (this.#numOfPlayers - this.#playersOut ) - 1) {
+
+                }
+                this.#playersOut++;
+
+            }
+            
+        })
+         
     }
 
     isThinking(playerid) {
@@ -88,6 +104,7 @@ class Game {
 
         return true;
     }
+
     getPlayerStatus() {
         newListOfPlayers = []
         return this.#listOfPlayers.map(player => {
@@ -96,26 +113,9 @@ class Game {
     }
 
     setPlayerStatus(playerid, value, amount = 0) {
-        return new Promise((resolve, reject) => {
-            let player = this.#listOfPlayers.find(player => player.getID() === playerid);
-            if(!player) return reject('Player not found');
-            
-            if(player.getStatus() === "thinking") {
-                let timeout = setTimeout(() => {
-                    // If player did not respond, make a default move.
-                    player.setStatus(Player.actions.indexOf("check"));
-                    resolve();
-                }, 30000); // Wait for 30 seconds.
-    
-                // Listen for the player's action and clear the timeout if player has responded.
-                player.on('action', () => {
-                    clearTimeout(timeout);
-                    resolve();
-                });
-            } else {
-                reject('Player is not thinking');
-            }
-        });
+        let player = this.#listOfPlayers.find(player => player.getID() === playerid);
+        if(!player) return false;
+        
     }
 
     /*
@@ -144,7 +144,7 @@ class Game {
             hands: []
         }
         this.#listOfPlayers.forEach(player => {
-            if(player.getStatus() != "fold") {
+            if(player.getStatus() != "fold" || player.getStatus() != "out") {
                 this.#winners.push(player)
             }
         });
@@ -166,8 +166,8 @@ class Game {
 
         this.#winners.sort((player1, player2) => player2.getRank() - player1.getRank());
     }
-    //adds to the balance in the list of players field
 
+    //adds to the balance in the list of players field
     addWinnings(playerid, value) {
         this.#listOfPlayers.forEach(player => {
             if(player.getID() === playerid) {
@@ -176,6 +176,7 @@ class Game {
         })
     }
 
+    //checks if there are one or more winners and calls the addWinnings function to add to player's cash.
     getWinner() {
         let isTied = true;
         let  PotSplit = 1;
@@ -195,8 +196,40 @@ class Game {
             this.addWinnings(this.#winners[i].getID(), (this.#pot/PotSplit));
         }
     }
-    
-    async newGame() {
+    /**
+     * ROUNDS
+     * 0 - player check: if ironman starts 
+     */
+    endRound() {
+
+        //if end round is called and it's the last round it finds the winner.
+        if(this.#round == 4) {
+            this.evaluate();
+            this.getWinner();
+            this.reset()
+            this.moveBlinds();
+        }
+
+        //5th card
+        if(this.#round == 3) {
+            this.#river.push(this.drawCard())
+        }
+        //4th card
+        if(this.#round == 2) {
+            this.#river.push(this.drawCard())
+        }
+        if(this.#round == 1) {
+            this.#river.push(this.drawCard())
+        }
+        this.#round
+    }
+
+    newRound() {
+        //sets the last to bet to the little blind. Sets to one before the 
+        this.#lastToBet = this.#lblind
+
+    }
+    newGame() {
         this.#deck = new Deck();
         let continueGame =  true
         for(let i = 0; i < 5; i++) {
@@ -206,9 +239,9 @@ class Game {
             for(let i = 0; i < this.#numOfPlayers; i++) {
                 // If the player is the 'big blind' player
                 if(i == this.#bblind) { // Assuming that you have the big blind index
-                    await this.setPlayerStatus(this.#listOfPlayers[i].getID(), 'thinking');
+                    this.setPlayerStatus(this.#listOfPlayers[i].getID(), 'thinking');
                 } else {
-                    await this.setPlayerStatus(this.#listOfPlayers[i].getID(), 'waiting');
+                    this.setPlayerStatus(this.#listOfPlayers[i].getID(), 'waiting');
                 }
             }
             this.#round++
@@ -216,12 +249,11 @@ class Game {
                 continueGame = false
             }
         }
-        this.evaluate();
-        this.getWinner();
-        this.moveBlinds();
+        
         //change everything to default
-        reset()
+        
     }
+    //might need a round to show all cards.
     toJSON(playerid) {
         let player = this.#listOfPlayers.find(fPlayer => fPlayer.getID() === playerid)
         let hand = player.getHandStatus(playerid)

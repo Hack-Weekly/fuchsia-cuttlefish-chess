@@ -38,7 +38,7 @@ class Player {
     }
     setStatus(value) {
         //Default to thinking for any out of range numbers
-        if(value < 0 || value > 5) {
+        if(value < 0 || value > 6) {
             this.#status = Player.#actions[4];
         }
         //Default to thinking for any non numbers and floats
