@@ -276,8 +276,8 @@ text-decoration: none;
 export default InsideRoom
 
 const preDeal = {
-  card1 : {suit:"", rank:0},
-  card2 : {suit:"", rank:0},
+  card1 : {suit:"D", rank:3},
+  card2 : {suit:"S", rank:4},
 }
 const postDeal = {
   card1 : {suit:"", rank:0},

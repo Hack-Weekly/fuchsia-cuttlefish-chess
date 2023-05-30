@@ -62,7 +62,7 @@ wss.on('connection', (ws) => {
                 console.log(`Error setting player status: ${error}`);
             });
 
-            this.broadcastStatusChange(wss, data.playerid);
+            this.broadcastStatusChange(ws, data.playerid);
         } catch (err) {
             console.error( `Failed to process message: ${err}` );
         }

@@ -318,6 +318,7 @@ class Game {
         //change everything to default
         
     }
+    
     broadcastGameState() {
         
         this.#listOfPlayers.forEach(player => {
@@ -341,6 +342,7 @@ class Game {
             maxPlayers: this.#maxPlayers,
             round: this.#round,
             pot: this.#pot,
+
             playerToBet: this.#bettingPlayer,
             river: [],
             players: []
