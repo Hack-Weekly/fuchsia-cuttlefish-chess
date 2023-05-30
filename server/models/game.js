@@ -62,7 +62,7 @@ class Game {
             this.#numOfPlayers++;
             //if table is filled moves to the first round
             if(this.#numOfPlayers == this.#maxPlayers) {
-                this.newRound();
+                this.nextRound();
             }
             this.broadcastGameState();
             return true;
@@ -133,6 +133,16 @@ class Game {
             return false;
         }
         else{
+            //if someone raises then sets the last to bed for the round
+            // to the player before them.
+            if(value == "raise") {
+                player = this.#listOfPlayers.find(player => player.getID() == playerid)
+                this.#lastToBet = player.getTablePosition();
+                //if 
+                if(this.#bettingPlayer = this.#numOfPlayers - 1) {
+                    this.#bettingPlayer = 0;
+                }
+            }
             this.broadcastGameState();
             return true;
         }
@@ -221,30 +231,6 @@ class Game {
      * 0 - player check: if ironman starts game when full
      */
     endRound() {
-
-        //if end round is called and it's the last round it finds the winner.
-        if(this.#round == 5) {
-            this.evaluate();
-            this.getWinner();
-            this.reset()
-            this.moveBlinds();
-        }
-
-        //5th card
-        if(this.#round == 4) {
-            this.#river.push(this.drawCard())
-        }
-        //4th card
-        if(this.#round == 3) {
-            this.#river.push(this.drawCard())
-        }
-        //First 3 cards
-        if(this.#round == 2) {
-            for(let i = 0; i < 3; i++) {
-                this.#river.push(this.drawCard())
-            }
-            
-        }
         switch (this.#round) {
             case 5:
                 this.evaluate();
@@ -253,25 +239,54 @@ class Game {
                 this.moveBlinds();
                 break;
             case 4:
+                //draws cards and resets the betting player to the big blind
                 this.#river.push(this.drawCard())
+                this.#bettingPlayer = this.#bblind
+
                 break;
             case 3:
+                //draws cards and resets the betting player to the big blind
                 this.#river.push(this.drawCard())
+                this.#bettingPlayer = this.#bblind
                 break;
             case 2:
+                //draws cards and resets the betting player to the big blind
                 for(let i = 0; i < 3; i++) {
                     this.#river.push(this.drawCard())
                 }
+                this.#bettingPlayer = this.#bblind
                 break;
             case 1:
-                
+                hands = [[],[],[],[],[],[],[]]
+                for(let i = 0; i < hands.length; i++) {
+                    hands[i].push(this.drawCard());
+                }
+                for(let i = 0; i < hands.length; i++) {
+                    hands[i].push(this.drawCard());
+                }
+                for(let i = 0; i < hands.length; i++) {
+
+                }
+                this.#listOfPlayers.forEach(player => {
+                    if(player.getTablePosition() == this.#bblind) {
+                        player.placeBet(10, 10)
+                    }
+                    if(player.getTablePosition() == this.#lblind) {
+                        player.placeBet(5, 5)
+                    }
+                    
+
+                })
                 break;
             case 0:
 
             default:
                 break;
+
         }
-        this.#round
+        this.#round++
+        this.broadcastGameState();
+        
     }
 
     newRound() {
@@ -319,6 +334,8 @@ class Game {
         let player = this.#listOfPlayers.find(fPlayer => fPlayer.getID() === playerid)
 
         let river = []
+
+        //table properties
         const jsonObject = {
             numOfPlayers: this.#numOfPlayers,
             maxPlayers: this.#maxPlayers,
@@ -329,14 +346,18 @@ class Game {
             players: []
         };
 
+        //player information
         for(let i = 0; i < this.#listOfPlayers.length; i++) {
             const player = this.#listOfPlayers[i];
             const playerObject = {
                 balance: player.getCash(),
                 bet: player.getBet(),
                 tablePosition: player.getTablePosition(),
+                status: player.getStatus(),
                 hand: []
             }
+            //hand information
+            //if playerid is the same or round 5 show all the cards.
             if(player.getID() == playerid || this.#round == 5) {
                 let hand = player.showHand(player.getID());
                 for(let j = 0; j < hand.length; j++) {

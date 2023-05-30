@@ -16,6 +16,10 @@ function InsideRoom() {
   const [playerCash, setPlayerCash] = useState(0);
 
   // TESTING
+  function buttonMethod() {
+    ws.send("action")
+  }
+
   const reset = ()=>{
     setPlayerCards(preDeal);
     setCommunityCards(preFlop)
@@ -47,14 +51,93 @@ function InsideRoom() {
     };
 
     wsInstance.onmessage = (event) => {
-      console.log(event.data)
+      let jsonObj = JSON.parse(event.data);
+      let objPot = jsonObj.pot;
+      const objRiver = {
+        card1 : {suit:"", rank:0},
+        card2 : {suit:"", rank:0},
+        card3 : {suit:"", rank:0},
+        card4 : {suit:"", rank:0},
+        card5 : {suit:"", rank:0},
+      };
+      for (let i = 1; i <= jsonObj.river.length; i++) {
+        console.log((jsonObj.river[i]))
+        if (jsonObj.river[i].suit !== "") {
+          objRiver[`card${i}`].suit = jsonObj.river[i].suit;
+          objRiver[`card${i}`].rank = jsonObj.river[i].rank;
+        }
+      }
+      // jsonObj.river.forEach(card => {
+      //   if (card.suit !== "") {
+      //     objRiver.push(card);
+      //   } else {
+      //     objRiver.push({suit:"", rank:0})
+      //   }
+      // })
+      // objRiver = {
+      //   card1 : {suit:"S", rank:2},
+      //   card2 : {suit:"S", rank:3},
+      //   card3 : {suit:"C", rank:5},
+      //   card4 : {suit:"", rank:0},
+      //   card5 : {suit:"", rank:0},
+      // };
+      let objPlayer;
+      jsonObj.players.forEach(el => {
+        if (el.hand[0] !== null && el.hand[1] !== null) {
+          setPlayerCards(el.hand)
+          setPlayerCards({
+            card1: {suit:"C", rank:12},
+            card2: {suit:"C", rank:12}
+          })
+        }
+      })
+      objPlayer = {
+          card1: {suit:"C", rank:12},
+          card2: {suit:"C", rank:11}
+      };
+
+      console.log("objPot is ", objPot);
+      console.log("objPlayer is ", objPlayer);
+      console.log("objRiver is ", objRiver);
+
+      setPot(objPot);
+      setPlayerCards(objPlayer);
+      setCommunityCards(objRiver);
+
+      // console.log(jsonObj);
+      // setCommunityCards(jsonObj.river);
+      // setCommunityCards({
+      //   cards: {
+      //     card1: {suit:"C", rank:12},
+      //     card2: {suit:"C", rank:12},
+      //     card3: {suit:"S", rank:2},
+      //     card4: {suit:"S", rank:3},
+      //     card5: {suit:"S", rank:4},
+      //   }
+      // });
+      // jsonObj.players.forEach(el => {
+      //   setPlayerCards({
+      //     cards: {
+      //       card1: {suit:"C", rank:12},
+      //       card2: {suit:"C", rank:12}
+      //     }
+      //   })
+        // if (el.hand[0] !== null && el.hand[1] !== null) {
+        //   setPlayerCards(el.hand)
+        //   setPlayerCards({
+        //     cards: {
+        //       card1: {suit:"C", rank:12},
+        //       card2: {suit:"C", rank:12}
+        //     }
+        //   })
+        // }
+      // })
+      // setPot(jsonObj.pot);
     }
 
     wsInstance.onerror = (error) => {
       console.error('WebSocket encountered an error:', error);
     };
-
-
 
     return () => {
       if (wsInstance) {
@@ -197,8 +280,8 @@ const preDeal = {
   card2 : {suit:"", rank:0},
 }
 const postDeal = {
-  card1 : {suit:"D", rank:3},
-  card2 : {suit:"D", rank:4},
+  card1 : {suit:"", rank:0},
+  card2 : {suit:"", rank:0},
 }
 
 const preFlop = {
