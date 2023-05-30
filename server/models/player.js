@@ -12,17 +12,18 @@ class Player {
 
     //websocket id associated with 
     #playerid;
-
+    #ws
     #amount;
     #bet
     #tablePosition;
 
     #hand = [];
     #rank;
-    constructor(playerid, startingAmount, position) {
+    constructor(playerid, startingAmount, position, ws) {
         this.#playerid = playerid;
         this.#amount = startingAmount;
         this.#tablePosition = position;
+        this.#ws = ws
     }
 
     dealHand(cards) {
@@ -48,6 +49,12 @@ class Player {
         else {
             this.#status = Player.#actions[value];
         }
+    }
+    getWS() {
+        return this.#ws;
+    }
+    setWS(ws) {
+        this.#ws = ws;
     }
 
     getID() {

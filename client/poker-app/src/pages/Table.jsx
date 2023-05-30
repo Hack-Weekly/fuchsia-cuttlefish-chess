@@ -46,6 +46,10 @@ function InsideRoom() {
       }
     };
 
+    wsInstance.onmessage = (event) => {
+      console.log(event.data)
+    }
+
     wsInstance.onerror = (error) => {
       console.error('WebSocket encountered an error:', error);
     };

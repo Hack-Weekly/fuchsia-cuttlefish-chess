@@ -44,7 +44,7 @@ wss.on('connection', (ws) => {
 
     
     const playerId = ws.id
-    const success = game.playerJoins(playerId);
+    const success = game.playerJoins(playerId, ws);
 
     if (!success) {
         ws.close(1001, 'Game is full');
@@ -55,7 +55,6 @@ wss.on('connection', (ws) => {
     console.log( `Connection ${ws.id} open.` );
 
     ws.on('message', (message) => {
-
         try {
             let data
             data = JSON.parse(message);
@@ -63,17 +62,15 @@ wss.on('connection', (ws) => {
                 console.log(`Error setting player status: ${error}`);
             });
 
-            broadcastStatusChange(wss, data.playerid);
+            this.broadcastStatusChange(wss, data.playerid);
         } catch (err) {
             console.error( `Failed to process message: ${err}` );
         }
     });
     ws.on('close', () => {
-        if()
         game.playerLeaves(id);
         console.log( `Connection ${ws.id} closed.` );
-        let i = 0;
-        game.list
+        game.broadcastGameState();
     });
 });
 
